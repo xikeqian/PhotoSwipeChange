@@ -1,4 +1,4 @@
-/*! PhotoSwipe - v4.1.3 - 2021-05-22
+/*! PhotoSwipe - v4.1.3 - 2021-04-06
 * http://photoswipe.com
 * Copyright (c) 2021 Dmitry Semenov; */
 (function (root, factory) { 
@@ -449,10 +449,10 @@ var _isOpen,
 		if(!_renderMaxResolution || (item && item !== self.currItem) ) {
 			zoom = zoom / (item ? item.fitRatio : self.currItem.fitRatio);
 		}
-		// 设置div.pswp__zoom-wrap的transform属性值,对transform的值做兼容处理，防止出现translate3d(375px, *px, 0px) scale(0)，导致图片无法显示
+
 		styleObj[_transformKey] = _translatePrefix + x + 'px, ' + y + 'px' + _translateSufix + ' scale(' + zoom + ')';
 	},
-	_applyCurrentZoomPan = function( allowRenderResolution ) { // 进行触摸事件放大处理
+	_applyCurrentZoomPan = function( allowRenderResolution ) {
 		if(_currZoomElementStyle) {
 
 			if(allowRenderResolution) {
@@ -688,7 +688,7 @@ var _isOpen,
 		}
 	},
 
-	_onGlobalClick = function(e) { // click事件处理函数
+	_onGlobalClick = function(e) {// click事件处理函数
 		if(!e) {
 			return;
 		}
@@ -927,7 +927,7 @@ var publicMethods = {
 		framework.addClass(template, rootClasses);
 
 		self.updateSize();
-		// _itemHolders是pswp__item DOM数组集合，当切换图片时会实时更新
+
 		// initial update
 		_containerShiftIndex = -1;
 		_indexDiff = null;
@@ -1051,7 +1051,7 @@ var publicMethods = {
 		_applyCurrentZoomPan();
 	},
 
-	handleEvent: function (e) {// 进行事件分发给相应的处理函数
+	handleEvent: function (e) {
 		e = e || window.event;
 		if(_globalEventHandlers[e.type]) {
 			_globalEventHandlers[e.type](e);
@@ -1347,42 +1347,39 @@ var publicMethods = {
 	},
 
 	// 隐藏图片遮罩
-	hidePhotoMask: function(currItem) {
-		if (!currItem.container) return;
-		let htmlLength = currItem.container.children.length;
+	hidePhotoMask: function(gallery) {
+		if (!gallery.container) return;
+		let htmlLength = gallery.container.children.length;
 		for(let i = 0; i < htmlLength; i++) {
-			if (currItem.container.children[i].className.indexOf("pswp__img--mask") !== -1) {
-				currItem.container.children[i].style.display = "none";
+			if (gallery.container.children[i].className.indexOf("pswp__img--mask") !== -1) {
+				gallery.container.children[i].style.display = "none";
 			}
 		}
 	},
 
 	// 阻止长按图片出现保存选项
-	preventLongClickDownload(currItem) {
-		if (!currItem.container) return;
-		let htmlLength = currItem.container.children.length;
+	preventLongClickDownload(gallery) {
+		if (!gallery.container) return;
+		let htmlLength = gallery.container.children.length;
 		for(let i = 0; i < htmlLength; i++) {
-			if (currItem.container.children[i].className.indexOf("pswp__img--mask") !== -1) {
-				currItem.container.children[i].style.display = "block";
+			if (gallery.container.children[i].className.indexOf("pswp__img--mask") !== -1) {
+				gallery.container.children[i].style.display = "block";
 			}
 		}
 	},
 
 	// 显示图片遮罩
-	showPhotoMask(currItem) {
-		if (!currItem.container) {
-			console.log('currItem.container 不存在')
+	showPhotoMask(gallery) {
+		if (!gallery.container) return;
+		if (!gallery.loaded) {
+			gallery.needMask = true;
 			return;
 		}
-		if (!currItem.loaded) {
-			currItem.needMask = true;
-			return;
-		}
-		let htmlLength = currItem.container.children.length;
+		let htmlLength = gallery.container.children.length;
 		for(let i = 0; i < htmlLength; i++) {
-			if (currItem.container.children[i].className.indexOf("pswp__img--mask") !== -1) {
-				if (currItem.container.children[i].className.indexOf('photo_trade') === -1) {
-					currItem.container.children[i].className += " photo_trade";
+			if (gallery.container.children[i].className.indexOf("pswp__img--mask") !== -1) {
+				if (gallery.container.children[i].className.indexOf('photo_trade') === -1) {
+					gallery.container.children[i].className += " photo_trade";
 				}
 			}
 		}
@@ -1940,6 +1937,7 @@ var _gestureStartTime,
 			_applyCurrentZoomPan();
 
 		} else {
+
 			// handle behaviour for one point (dragging or panning)
 
 			if(!_direction) {
@@ -1970,7 +1968,7 @@ var _gestureStartTime,
 
 			// 如果当前对象是视频，在移动之前停止播放视频
 			zepto(self.currItem.container).children("div.pswp__video").length && pauseVideo(zepto(self.currItem.container).children("div.pswp__video"));
-			// 垂直拖拽关闭photoswipe
+
 			if(_direction === 'v' && _options.closeOnVerticalDrag) {
 				if(!_canPan()) {
 					_currPanDist.y += delta.y;
@@ -1991,7 +1989,7 @@ var _gestureStartTime,
 
 			_moved = true;
 			_currPanBounds = self.currItem.bounds;
-			// 水平移动pswp__item，切换pswp__item展示
+
 			var mainScrollChanged = _panOrMoveMainScroll('x', delta);
 			if(!mainScrollChanged) {
 				_panOrMoveMainScroll('y', delta);
@@ -2850,7 +2848,6 @@ var _getItemAt,
 
 			return item.bounds;
 		} else {
-			// 图片加载失败把w, h置0
 			item.w = item.h = 0;
 			item.initialZoomLevel = item.fitRatio = 1;
 			item.bounds = _getZeroBounds();
@@ -2893,7 +2890,7 @@ var _getItemAt,
 
 
 	_preloadImage = function (item) {
-		// 在这里对图片进行加载，看图片是否能加载成功
+
 		if (item.type && item.type === 'video') {
 			var videoContainer = framework.createEl("pswp__video pswp__video--container");
 			var p_w = Math.round(item.w * item.fitRatio), p_h = p_w * 9 / 16;
@@ -2941,7 +2938,7 @@ var _getItemAt,
 			if (cleanUp) {
 				item.container.innerHTML = '';
 			}
-			// 加载出错显示The image could not be loaded.
+
 			item.container.innerHTML = _options.errorMsg.replace('%url%', item.src);
 			return true;
 
@@ -2964,10 +2961,8 @@ var _getItemAt,
 			item.placeholder.style.height = h + 'px';
 		}
 
-		if (!item.type || item.type !== 'video') {
-			img.style.width = w + 'px';
-			img.style.height = h + 'px';
-		}
+		img.style.width = w + 'px';
+		img.style.height = h + 'px';
 
 		if (img.className.indexOf("pswp__video--container") === -1 && img.className.indexOf("pswp__img--mask") === -1) {
 			img.style.width = w + "px", img.style.height = 'auto';
@@ -2993,9 +2988,6 @@ var _getItemAt,
 					<img src="https://common.xxpie.com/h5:album_video_play_simpleWhite.png" class="video_play_btn">
 				</div>
 			`;
-			console.log('return video element in createImgOrVideoFunction');
-			return video;
-
 		} else {
 			var img;
 			img = framework.createEl('pswp__img', 'img');
@@ -3040,7 +3032,7 @@ _registerModule('Controller', {
 
 	publicMethods: {
 
-		lazyLoadItem: function (index) {// 当查看当前图片对象的时候，懒加载去渲染其他两个图片对象
+		lazyLoadItem: function (index) {
 			index = _getLoopedId(index);
 			var item = _getItemAt(index);
 
@@ -3186,23 +3178,12 @@ _registerModule('Controller', {
 			_calculateItemSize(item, _viewportSize);
 
 			if (item.src && !item.loadError && !item.loaded) {
-				// 当pswp__item对应的图片处理加载状态时，添加pswp__item-loading类名
-				const itemHolder = self.itemHolders && self.itemHolders.filter(function(item) {
-					return item.index === index;
-				})[0];
-				if (itemHolder && itemHolder.el) {
-					itemHolder.el.classList && itemHolder.el.classList.add('pswp__item-loading')
-				}
-				item.loadComplete = function (item) { // 在div.pswp__zoom-wrap有transform属性时进行添加，但div.pswp__img--placeholder可能会被清除
+
+				item.loadComplete = function (item) {
 
 					// gallery closed before image finished loading
 					if (!_isOpen) {
 						return;
-					}
-
-					// 当pswp__item对应的图片处理加载完成时，移除pswp__item-loading类名
-					if (itemHolder && itemHolder.el) {
-						itemHolder.el.classList && itemHolder.el.classList.remove('pswp__item-loading')
 					}
 
 					// check if holder hasn't changed while image was loading
@@ -3240,12 +3221,9 @@ _registerModule('Controller', {
 						}
 					}
 
-					// 当照片需要添加遮罩的时候，在图片加载完成之后展示遮罩
-					if (item.needMask) {
-						self.showPhotoMask(item);
-					}
 					item.loadComplete = null;
 					item.img = null; // no need to store image element after it's added
+
 					_shout('imageLoadComplete', index, item);
 				};
 
