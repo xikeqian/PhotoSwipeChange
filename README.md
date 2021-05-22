@@ -1,10 +1,10 @@
-# PhotoSwipe Repository 
+# PhotoSwipe Repository
 
-[![Build Status](https://travis-ci.org/dimsemenov/PhotoSwipe.svg)](https://travis-ci.org/dimsemenov/PhotoSwipe) 
+[![Build Status](https://travis-ci.org/dimsemenov/PhotoSwipe.svg)](https://travis-ci.org/dimsemenov/PhotoSwipe)
 [![devDependency Status](https://david-dm.org/dimsemenov/PhotoSwipe/dev-status.svg)](https://david-dm.org/dimsemenov/PhotoSwipe#info=devDependencies)
 [![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](http://flattr.com/thing/3698358/dimsemenovPhotoSwipe-on-GitHub)
 
-JavaScript image gallery for mobile and desktop. 
+JavaScript image gallery for mobile and desktop.
 
 - [Documentation and getting started guide](http://photoswipe.com/documentation/getting-started.html).
 - [Demo and script home page](http://photoswipe.com).
@@ -34,7 +34,7 @@ JavaScript image gallery for mobile and desktop.
 
 Coded something useful? <a href='mailto:diiiimaaaa@gmail.com?subject="PhotoSwipe Plugin"'>Email me</a> and I’ll post a link to it here.
 
-## Build 
+## Build
 
 To compile PhotoSwipe by yourself, make sure that you have [Node.js](http://nodejs.org/), [Grunt.js](https://github.com/cowboy/grunt), [Ruby](http://www.ruby-lang.org/) and [Jekyll](https://github.com/mojombo/jekyll/) installed, then:
 
